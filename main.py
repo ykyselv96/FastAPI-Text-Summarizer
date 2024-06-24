@@ -1,28 +1,32 @@
-from fastapi import FastAPI, Request
 import uvicorn
-from langchain_openai import ChatOpenAI
-from langchain.docstore.document import Document
-from langchain.text_splitter import CharacterTextSplitter
-from langchain.chains.summarize import load_summarize_chain
-
 from core.config import settings
+from langchain_huggingface import HuggingFaceEndpoint
+from fastapi import FastAPI, Request
+
+
 
 app = FastAPI()
 
+
+summarizer = HuggingFaceEndpoint(
+    repo_id="meta-llama/Meta-Llama-3-8B-Instruct",
+    token=settings.huggingfacehub_api_token,
+    task="summarization"
+)
+
+def summarize(text: str) -> str:
+    response = summarizer(
+        prompt=text,
+        max_new_tokens=100,
+        do_sample=False
+    )
+    return response
+
 @app.post("/summarize")
-async def summarize(request: Request):
+async def summarize_endpoint(request: Request):
     data = await request.json()
     text = data.get("text", "")
-
-    llm = ChatOpenAI(temperature=0, openai_api_key=settings.openai_api_key)
-
-    text_splitter = CharacterTextSplitter()
-    texts = text_splitter.split_text(text)
-
-    docs = [Document(page_content=t) for t in texts]
-
-    chain = load_summarize_chain(llm, chain_type='map_reduce')
-    summary = chain.invoke(docs)
+    summary = summarize(text)
     return {"summary": summary}
 
 

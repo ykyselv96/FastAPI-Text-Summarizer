@@ -8,8 +8,7 @@ class Settings():
 
     app_port = os.getenv("PORT")
     app_host = os.getenv("HOST")
-    openai_api_key = os.getenv("OPENAI_API_KEY")
-
+    huggingfacehub_api_token = os.getenv("HUGGINGFACEHUB_API_TOKEN")
 
 settings = Settings()
 

@@ -2,6 +2,5 @@ fastapi==0.88.0
 uvicorn==0.20.0
 python-dotenv==1.0.1
 langchain==0.2.5
-langchain_community==0.2.5
-openai==1.35.3
-langchain_openai==0.1.9
+langchain-huggingface==0.0.3
+
